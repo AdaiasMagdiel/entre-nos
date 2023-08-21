@@ -21,18 +21,16 @@ jobs:
       - name: Install dependencies
         run: npm install
 
-      - name: Set NODE_ENV to production
-        run: echo "NODE_ENV=production" >> $GITHUB_ENV
-
       - name: Build the app
         run: npm run build
 
       - name: Deploy to GitHub Pages
         env:
+          NODE_ENV: production
           ACCESS_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          git config --global user.name "Adaías Magdiel"
-          git config --global user.email "adaiasmagdiell@gmail.com"
+          git config --global user.name "${GITHUB_ACTOR}"
+          git config --global user.email "${GITHUB_ACTOR}@users.noreply.github.com"
           npm install -g push-dir
-          push-dir --dir=dist --branch=gh-pages --cleanup
+          push-dir --dir=dist --branch=gh-pages --cleanup --force  # Adicione --force aqui
 
