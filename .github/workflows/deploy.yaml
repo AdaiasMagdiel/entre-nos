@@ -30,10 +30,11 @@ jobs:
         env:
           ACCESS_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
+          git config --global init.defaultBranch main
           git config --global user.name "${GITHUB_ACTOR}"
           git config --global user.email "${GITHUB_ACTOR}@users.noreply.github.com"
           cd dist
           git init
           git add -A
           git commit -m "🚀 Deploy id ${GITHUB_RUN_ID}"
-          git push -f "https://github.com/${GITHUB_REPOSITORY}.git" gh-pages
+          git push -f "https://github.com/${GITHUB_REPOSITORY}.git" main:gh-pages
