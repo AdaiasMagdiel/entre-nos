@@ -1,40 +1,32 @@
-name: Deploy to GitHub Pages
-
+name: deploy
 on:
   push:
     branches:
       - main
-
 jobs:
-  build-and-deploy:
+  deploy:
     runs-on: ubuntu-latest
-
     steps:
-      - name: Checkout repository
-        uses: actions/checkout@v2
-
-      - name: Setup Node.js
-        uses: actions/setup-node@v2
+      - uses: actions/checkout@v1
+      - uses: actions/setup-node@v1
         with:
-          node-version: 18
-
-      - name: Install dependencies
-        run: npm install
-
-      - name: Build the app
+          node-version: '18'
+      - name: setup git auth
         env:
-          NODE_ENV: production
-        run: npm run build
-
-      - name: Deploy to GitHub Pages
-        env:
-          ACCESS_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          email: 'adaiasmagdiell@gmail.com'
+          username: 'AdaiasMagdiel'
+          access_token: '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'
         run: |
-          git config --global init.defaultBranch main
-          git config --global user.name "${GITHUB_ACTOR}"
-          git config --global user.email "${GITHUB_ACTOR}@users.noreply.github.com"
+          git config --global credential.helper store
+          echo "https://${access_token}:x-oauth-basic@github.com" > ~/.git-credentials
+          git config --global user.email $email
+          git config --global user.name $username
+      - name: deploy to gh-pages
+        run: |
+          npm i
+          NODE_ENV=production npm run build
           cd dist
           git init
           git add -A
           git commit -m "🚀 Deploy id ${GITHUB_RUN_ID}"
-          git push -f "https://github.com/${GITHUB_REPOSITORY}.git" main:gh-pages
+          git push -f "https://github.com/${GITHUB_REPOSITORY}.git" master:gh-pages
