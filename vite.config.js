@@ -5,7 +5,7 @@ import vue from '@vitejs/plugin-vue'
 
 // https://vitejs.dev/config/
 export default defineConfig({
-  base: import.meta.env.MODE === 'production' ? '/entre-nos/' : '/',
+  base: process.env.NODE_ENV === 'production' ? '/entre-nos/' : '/',
   plugins: [
     vue(),
   ],
