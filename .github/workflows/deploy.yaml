@@ -1,4 +1,4 @@
-name: deploy
+name: Deploy to GitHub Pages
 
 on:
   push:
@@ -6,32 +6,30 @@ on:
       - main
 
 jobs:
-  deploy:
+  build-and-deploy:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout code
+      - name: Checkout repository
         uses: actions/checkout@v2
 
       - name: Setup Node.js
         uses: actions/setup-node@v2
         with:
-          node-version: '14'
+          node-version: 18
 
-      - name: Install Dependencies
-        run: npm ci
+      - name: Install dependencies
+        run: npm install
 
-      - name: Build
+      - name: Build the app
         run: npm run build
 
       - name: Deploy to GitHub Pages
+        env:
+          ACCESS_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          git config --global user.email "adaiasmagdiell@gmail.com"
-          git config --global user.name "Adaías Magdiel"
-          git checkout --orphan gh-pages
-          git rm -rf .
-          mv dist/* .
-          rm -r dist
-          git add .
-          git commit -m "Deploy to GitHub Pages"
-          git push --force origin gh-pages
+          git config --global user.name "${GITHUB_ACTOR}"
+          git config --global user.email "${GITHUB_ACTOR}@users.noreply.github.com"
+          npm install -g push-dir
+          push-dir --dir=dist --branch=gh-pages --cleanup
+
